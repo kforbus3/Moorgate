@@ -89,7 +89,7 @@ jobs:
           cache-dependency-path: ${{ matrix.module }}/go.sum
       - name: golangci-lint
         # v8 installs golangci-lint v2, which the .golangci.yml files use (v2 schema).
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           version: latest
           working-directory: ${{ matrix.module }}
