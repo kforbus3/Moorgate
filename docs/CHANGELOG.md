@@ -5,6 +5,68 @@ schema migrations apply automatically on startup; deploy notes call out anything
 
 ---
 
+## v2.1.0 — The Vulnerabilities page now leads with what you can fix — 2026-09-05
+
+The roll-up was answering the wrong question. A fully-patched fleet rendered as a
+wall of red — one host showed **1,646 CVEs, 86 critical, 461 high** — while the only
+number that meant anything, **Fixable: 0**, sat in a small chip six columns to the
+right. Every prominent figure on the page was a CVE nobody could do anything about.
+
+Nothing was miscounted. On a patched Debian host roughly 60% of CVEs are
+`not-fixed` (acknowledged upstream, no patch shipped) and 40% are `wont-fix`
+(assessed and deliberately not fixed), and severity comes from **NVD**, not from the
+distribution — so "Critical, won't-fix" is a normal and expected combination. The
+page simply had no way to say so.
+
+**The roll-up is now split into "Actionable now" and "Exposure (no fix available)."**
+Scans record their severity breakdown **scoped to the fixable subset**, so the table
+leads with fixable count, fixable critical, fixable high, and the worst *fixable*
+CVSS. Raw critical/high move right and render muted. A headline banner states the
+fleet's position in one line before any row is read — *"Nothing outstanding. No
+fixable CVEs across 17 hosts."*
+
+**"Max CVSS" is gone; "Worst fixable" replaces it.** The old column read 10.0 on
+essentially every Linux host — it was the worst NVD score of any CVE touching any
+installed package — so it sorted nothing and said nothing. The new one is 0 when
+there is nothing to patch and tells you how urgent it is when there isn't.
+
+**Kernel CVEs are attributed to the kernel.** Distribution trackers key on the
+**source** package, so grype resolves each binary to its source and every binary
+built from that source inherits the source's whole CVE list. Debian builds the
+kernel's userspace helpers — `cpupower`, `linux-headers-*`, `linux-kbuild-*`,
+`linux-libc-dev` — from the same `linux` source its tracker files kernel CVEs under,
+so **the entire kernel CVE list was being matched against a CPU-frequency utility**:
+227 of one host's 547 critical+high CVEs, 41% of the alarming number. The installed
+`linux-image-*` packages matched *nothing*, because Debian's signed images build from
+`linux-signed-amd64`, which the tracker does not key on.
+
+Findings now carry their source package. The drill-down **groups on it by default**
+(one row per CVE and component instead of one per binary — roughly half as many
+rows), labels these findings **`kernel`** with the packages they were matched
+through, and shows the host's **running kernel** beside the version grype actually
+matched, so a kernel that has been upgraded but not rebooted is visible rather than
+implied.
+
+**Also**
+
+- The Ask assistant's vulnerability roll-up leads with the same fixable columns, and
+  its result explains that a high critical count with zero fixable means there is
+  nothing to patch — so it stops reporting a patched fleet as an emergency.
+- Roll-up ordering is by fixable critical, then fixable high, then fixable count —
+  a host with one fixable critical outranks one with twenty fixable mediums.
+- The SDK's `VulnScan` gains `fixable`/`wontFix` (previously missing entirely) and
+  the four new fixable fields; `VulnFinding` gains `sourcePackage`. Automation should
+  gate on `fixableCritical` rather than `critical`.
+- New `make scanner-test` target covering the grype-scanner sidecar's parsing, now
+  part of `make test`.
+
+**Upgrade note.** The migration is additive. Existing scan rows keep their old
+values until re-scanned: the fixable severity counts read 0 — which is also what a
+patched host reports, so the roll-up stays honest — and findings show no source
+package, falling back to the binary name for grouping. **Re-scan to populate them.**
+
+---
+
 ## v2.0.0 — Moorgate — 2026-08-16
 
 The product is now **Moorgate**. Alongside the rename, this release closes every
