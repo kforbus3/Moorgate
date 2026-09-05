@@ -43,7 +43,7 @@ func TestIsKernelSourceFindingIgnoresNonKernelSources(t *testing.T) {
 	cases := []VulnFinding{
 		{Package: "libcurl4t64", SourcePackage: "curl"},
 		{Package: "perl-base", SourcePackage: "perl"},
-		{Package: "libcpupower1", SourcePackage: ""},          // pre-capture scan: no source known
+		{Package: "libcpupower1", SourcePackage: ""},           // pre-capture scan: no source known
 		{Package: "linux-cpupower", SourcePackage: "cpupower"}, // hypothetical split-out source
 	}
 	for _, f := range cases {

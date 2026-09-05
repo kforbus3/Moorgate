@@ -152,21 +152,21 @@ type TokenInput struct {
 
 // VulnScan is a vulnerability scan of one host, with severity rollups.
 type VulnScan struct {
-	ID         string     `json:"id"`
-	HostID     string     `json:"hostId"`
-	Hostname   string     `json:"hostname,omitempty"`
-	Requester  string     `json:"requester"`
-	Scheduled  bool       `json:"scheduled"`
-	Status     string     `json:"status"` // pending|running|completed|failed
-	Error      string     `json:"error,omitempty"`
-	Total      int        `json:"total"`
-	Critical   int        `json:"critical"`
-	High       int        `json:"high"`
-	Medium     int        `json:"medium"`
-	Low        int        `json:"low"`
-	Negligible int        `json:"negligible"`
-	Unknown    int        `json:"unknown"`
-	MaxCVSS    float64    `json:"maxCvss"`
+	ID         string  `json:"id"`
+	HostID     string  `json:"hostId"`
+	Hostname   string  `json:"hostname,omitempty"`
+	Requester  string  `json:"requester"`
+	Scheduled  bool    `json:"scheduled"`
+	Status     string  `json:"status"` // pending|running|completed|failed
+	Error      string  `json:"error,omitempty"`
+	Total      int     `json:"total"`
+	Critical   int     `json:"critical"`
+	High       int     `json:"high"`
+	Medium     int     `json:"medium"`
+	Low        int     `json:"low"`
+	Negligible int     `json:"negligible"`
+	Unknown    int     `json:"unknown"`
+	MaxCVSS    float64 `json:"maxCvss"`
 	// Fixable is the actionable subset: CVEs with a fix available now. WontFix are
 	// those the distribution assessed and will never fix. The Fixable* severity
 	// counts break the actionable subset down — automation should gate on those

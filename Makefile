@@ -234,9 +234,20 @@ scanner-test: ## Run grype-scanner sidecar unit tests (parsing only; no grype/DB
 	  sh -c "pip install -q pytest fastapi && python -m pytest -q"
 
 .PHONY: lint
-lint: ## Run Go vet
+lint: fmt-check ## Run gofmt check + Go vet
 	docker run --rm -v $(PWD)/backend:/src -w /src golang:1.26-alpine \
 	  sh -c "apk add --no-cache git >/dev/null && GOFLAGS=-mod=mod go vet ./..."
+
+.PHONY: fmt-check
+fmt-check: ## Fail if any Go file needs gofmt (CI enforces this; catch it before pushing)
+	@unformatted=$$(gofmt -l backend/cmd backend/internal sdk 2>/dev/null); \
+	if [ -n "$$unformatted" ]; then \
+	  echo "these files need gofmt (run: make fmt):"; echo "$$unformatted"; exit 1; \
+	fi
+
+.PHONY: fmt
+fmt: ## Rewrite Go files with gofmt
+	gofmt -w backend/cmd backend/internal sdk
 
 .PHONY: tidy
 tidy: ## Run go mod tidy and write go.sum back to the repo

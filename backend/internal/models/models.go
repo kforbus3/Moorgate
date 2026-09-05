@@ -721,8 +721,8 @@ type VulnScan struct {
 	// MaxCVSS is 10.0 on virtually every Linux host and so discriminates nothing.
 	FixableMaxCVSS float64    `json:"fixableMaxCvss"`
 	StartedAt      *time.Time `json:"startedAt,omitempty"`
-	FinishedAt *time.Time `json:"finishedAt,omitempty"`
-	CreatedAt  time.Time  `json:"createdAt"`
+	FinishedAt     *time.Time `json:"finishedAt,omitempty"`
+	CreatedAt      time.Time  `json:"createdAt"`
 }
 
 // VulnFinding is one CVE affecting one installed package.
